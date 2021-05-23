@@ -1,2 +1,2 @@
-import "./styles.css";
-import "./js/api-service";
+import './js/apiService';
+import './js/searchImages';

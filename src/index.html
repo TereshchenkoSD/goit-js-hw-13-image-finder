@@ -5,7 +5,28 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta http-equiv="X-UA-Compatible" content="ie=edge" />
     <title>goit-js-hw-13-image-finder</title>
+    <link
+      href="https://fonts.googleapis.com/icon?family=Material+Icons"
+      rel="stylesheet"
+    />
   </head>
 
-  <body></body>
+  <body>
+    <div class="search-form__container">
+      <form class="search-form js-search-form" id="search-form">
+        <input
+          class="search-input"
+          type="text"
+          name="query"
+          autocomplete="off"
+          placeholder="Search images..."
+        />
+      </form>
+      <button class="load-btn" type="button" data-action="load-more">
+        <span class="label">Load more</span>
+      </button>
+    </div>
+
+    <div class="gallery__container js-gallery"></div>
+  </body>
 </html>
