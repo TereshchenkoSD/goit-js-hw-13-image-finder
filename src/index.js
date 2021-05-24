@@ -1,2 +1,3 @@
 import './js/apiService';
 import './js/searchImages';
+import './sass/main.scss';

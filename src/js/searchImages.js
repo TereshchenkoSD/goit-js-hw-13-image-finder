@@ -1,28 +1,32 @@
-import fetchImages from './apiService';
+import ImagesApiService from './apiService';
 import galleryTpl from '../templates/gallery.hbs';
+import debounce from 'lodash.debounce';
 
 const refs = {
   searchForm: document.querySelector('.js-search-form'),
   searchInput: document.querySelector('.search-input'),
   loadBtn: document.querySelector('.load-btn'),
-  galleryContainer: document.querySelector('.js-gallery'),
+  galleryList: document.querySelector('.js-gallery'),
 };
 
-refs.searchInput.addEventListener('input', onSearch);
+const imagesApiService = new ImagesApiService();
+
+refs.searchInput.addEventListener('input', debounce(onSearch, 500));
+refs.loadBtn.addEventListener('click', onLoadMore);
 
 function onSearch(e) {
   onInputClear();
-  const searchQuery = e.target.value;
+  imagesApiService.query = e.target.value;
 
-  if (!searchQuery) {
+  if (!imagesApiService.query) {
     return;
   } else {
-    fetchImages(searchQuery).then(renderImages).catch(handleFetchError);
+    imagesApiService.fetchImages().then(renderImages).catch(handleFetchError);
   }
 }
 
 const onInputClear = () => {
-  refs.galleryContainer.innerHTML = '';
+  refs.galleryList.innerHTML = '';
 };
 
 const renderImages = data => {
@@ -32,9 +36,13 @@ const renderImages = data => {
 };
 
 const renderMarkup = markup => {
-  refs.galleryContainer.insertAdjacentHTML('afterbegin', markup);
+  refs.galleryList.insertAdjacentHTML('afterbegin', markup);
 };
 
 function handleFetchError(error) {
   console.log(error);
+}
+
+function onLoadMore() {
+  imagesApiService.fetchImages().then(renderImages).catch(handleFetchError);
 }
