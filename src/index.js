@@ -1,4 +1,4 @@
-import './js/apiService';
+import './js/components/apiService';
 import './js/searchImages';
-import './js/loadMoreBtn';
+import './js/components/loadMoreBtn';
 import './sass/main.scss';

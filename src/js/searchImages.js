@@ -1,14 +1,13 @@
-import ImagesApiService from './apiService';
-import LoadMoreBtn from './loadMoreBtn';
+import ImagesApiService from './components/apiService';
+import LoadMoreBtn from './components/loadMoreBtn';
+import getRefs from './getRefs';
+import { error } from '@pnotify/core';
 import galleryTpl from '../templates/gallery.hbs';
 import debounce from 'lodash.debounce';
+import '@pnotify/core/dist/BrightTheme.css';
+import '@pnotify/core/dist/PNotify.css';
 
-const refs = {
-  searchForm: document.querySelector('.js-search-form'),
-  searchInput: document.querySelector('.search-input'),
-  galleryList: document.querySelector('.js-gallery'),
-};
-
+const refs = getRefs();
 const imagesApiService = new ImagesApiService();
 const loadMoreBtn = new LoadMoreBtn({
   selector: '[data-action="load-more"]',
@@ -33,18 +32,30 @@ function onSearch(e) {
 
 const onInputClear = () => {
   refs.galleryList.innerHTML = '';
+  loadMoreBtn.hide();
 };
 
 function fetchImages() {
   loadMoreBtn.disable();
-  imagesApiService
+
+  return imagesApiService
     .fetchImages()
-    .then(renderImages, loadMoreBtn.enable())
+    .then(data => {
+      setTimeout(() => {
+        renderImages(data), loadMoreBtn.enable();
+      }, 300);
+    })
     .catch(handleFetchError);
 }
 
-const renderImages = data => {
-  const imageMarkup = galleryTpl(data);
+const renderImages = images => {
+  const imagesQuantity = images.length;
+  if (imagesQuantity === 0) {
+    loadMoreBtn.hide();
+    handleFetchError();
+  }
+
+  const imageMarkup = galleryTpl(images);
   renderMarkup(imageMarkup);
 };
 
@@ -52,10 +63,25 @@ const renderMarkup = markup => {
   refs.galleryList.insertAdjacentHTML('beforeend', markup);
 };
 
-function handleFetchError(error) {
-  console.log(error);
+function handleFetchError() {
+  error({
+    text: 'Invalid request',
+    hide: true,
+    delay: 1500,
+  });
 }
 
 function onLoadMore() {
   fetchImages();
+  scrollGallery();
+}
+
+function scrollGallery() {
+  const totalScrollHeight = refs.galleryList.clientHeight + 100;
+  setTimeout(() => {
+    window.scrollTo({
+      top: totalScrollHeight,
+      behavior: 'smooth',
+    });
+  }, 500);
 }
