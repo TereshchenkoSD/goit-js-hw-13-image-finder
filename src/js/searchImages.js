@@ -19,7 +19,7 @@ loadMoreBtn.refs.button.addEventListener('click', onLoadMore);
 
 function onSearch(e) {
   onInputClear();
-  imagesApiService.query = e.target.value;
+  imagesApiService.query = e.target.value.trim();
 
   if (!imagesApiService.query) {
     return;
@@ -42,7 +42,9 @@ function fetchImages() {
     .fetchImages()
     .then(data => {
       setTimeout(() => {
-        renderImages(data), loadMoreBtn.enable();
+        renderImages(data);
+        loadMoreBtn.enable();
+        imagesApiService.incrementPage();
       }, 300);
     })
     .catch(handleFetchError);
